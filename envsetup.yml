@@ -1,0 +1,6 @@
+lang: python
+toolchain: poetry
+
+container_system: docker
+setup_cmds:
+    - touch .env
