@@ -9,7 +9,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = discord.Bot(intents=intents)
 
-guilds = [976345115826212884]
+guild = 976345115826212884
 qa_channel = 976356366316875807
 
 
@@ -18,7 +18,7 @@ async def on_ready():
     print(f'Logged in as {bot.user.name}')
 
 
-@bot.slash_command(guild_ids=guilds, name="mkthread",
+@bot.slash_command(guild_ids=[guild], name="mkthread",
                    description="Creates a new thread in the #qa channel")
 async def create(ctx: discord.commands.context.ApplicationContext,
                  question: Option(str, "What is your question?", required=True, default='')):
