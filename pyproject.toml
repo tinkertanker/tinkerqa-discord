@@ -6,8 +6,8 @@ authors = ["Robert <xiurobert@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-py-cord = {version = "^1.7.3", allow-prereleases = true}
 python-dotenv = "^0.20.0"
+py-cord = {version = "^2.0.0*", allow-prereleases = true}
 
 [tool.poetry.dev-dependencies]
 
