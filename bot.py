@@ -26,6 +26,7 @@ async def create(ctx: discord.commands.context.ApplicationContext,
         await ctx.respond("Please try again, with an ACTUAL question")
         return
     user_response = await ctx.respond("Please wait, creating the thread now")
+    await ctx.trigger_typing()
     embed = discord.Embed(title="QA Thread", description="Please respond in the thread directly")
     avatar_url = ctx.author.default_avatar.url
     if ctx.author.avatar:
