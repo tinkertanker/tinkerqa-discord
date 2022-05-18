@@ -5,9 +5,7 @@ import os
 
 load_dotenv()
 
-intents = discord.Intents.default()
-intents.message_content = True
-bot = discord.Bot(intents=intents)
+bot = discord.Bot()
 
 guild = 976345115826212884
 qa_channel = 976356366316875807
@@ -24,12 +22,14 @@ async def on_ready():
                    description="Creates a new thread in the #qa channel")
 async def create(ctx: discord.commands.context.ApplicationContext,
                  question: Option(str, "What is your question?", required=True, default='')):
+    # TODO: this code needs to be refactored.
     if not question:
         await ctx.respond("Please try again, with an ACTUAL question")
         return
     user_response = await ctx.respond("Please wait, creating the thread now")
     with ctx.typing():
-        embed = discord.Embed(title="QA Thread", description="Please respond in the thread directly")
+        embed = discord.Embed(title="QA Thread",
+                              description="Please respond in the thread directly", color=0x2bff00)
         avatar_url = ctx.author.default_avatar.url
         if ctx.author.avatar:
             avatar_url = ctx.author.avatar.url
