@@ -101,7 +101,8 @@ async def delete_thread(ctx: discord.commands.context.ApplicationContext):
     thread: discord.Thread = ctx.channel
     if thread.locked:
         await ctx.author.send(content="I have deleted the locked thread")
-        # await thread.delete()
+        await thread.delete()
+        return
     else:
         await ctx.respond("A thread cannot be deleted if it is not locked and closed")
         return
@@ -111,7 +112,7 @@ class HackyException(Exception):
     pass
 
 
-def hacky_get_thread_starter_user_id(thread: discord.Thread) -> int:
+async def hacky_get_thread_starter_user_id(thread: discord.Thread) -> int:
     """
     This function is a hack to grab the "author" of the thread.
     Note this is extremely fragile and very highly dependent on how the message was sent.
@@ -141,6 +142,7 @@ async def close(ctx: discord.commands.context.ApplicationContext):
         return
 
     thread: discord.Thread = ctx.channel
+    question_author_id = await hacky_get_thread_starter_user_id(thread)
     if thread.locked:
         await ctx.respond("This command cannot be used inside a locked thread")
         await ctx.delete(delay=3)
@@ -148,7 +150,7 @@ async def close(ctx: discord.commands.context.ApplicationContext):
 
     if ctx.author.guild_permissions.manage_threads:
         await ctx.respond("Thread closed by moderator")
-    elif hacky_get_thread_starter_user_id(thread) == int(ctx.author.id):
+    elif question_author_id == int(ctx.author.id):
         await ctx.respond("Thread closed by OP")
     else:
         await ctx.respond("You do not have the permission to close this thread")
