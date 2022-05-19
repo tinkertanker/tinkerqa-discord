@@ -29,6 +29,8 @@ class ThreadTools(commands.Cog):
         :param question: the question
         :return: nothing
         """
+        if isinstance(ctx.channel, discord.Thread):
+            raise commands.BadArgument("You are already in a thread!")
         if not question:
             await ctx.respond("Please try again, with an ACTUAL question")
             await ctx.delete(delay=3)
