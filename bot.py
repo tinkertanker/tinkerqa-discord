@@ -95,13 +95,12 @@ async def delete_thread(ctx: discord.commands.context.ApplicationContext):
         await ctx.delete(delay=3)
         return
     if not ctx.author.guild_permissions.manage_threads:
-        await ctx.author.send(content="You do not have the permission to delete threads")
+        await ctx.respond(f"{ctx.author.mention}, you do not have permission to delete threads")
         await ctx.delete(delay=3)
         return
     thread: discord.Thread = ctx.channel
     if thread.locked:
-        # await ctx.author.send(content="I have deleted the locked thread")
-        await ctx.respond("This thread has been deleted")
+        await ctx.respond(f"This thread has been deleted by {ctx.author.mention}")
         await thread.delete()
         return
     else:
