@@ -3,12 +3,19 @@ from discord import Option
 from discord.ext import commands
 
 import tinkerqa_discord
+from tinkerqa_discord.commands.errors import NotInThread
 from tinkerqa_discord.helpers import gen_embed, hacky_get_thread_starter_user_id
 
 
 # guild = configuration["role_ids"]["guild"]
 # qa_channel = configuration["role_ids"]["qa_channel"]
 # helper_role = configuration["role_ids"]["helper_role"]
+
+async def is_in_thread(ctx: discord.ApplicationContext):
+    if isinstance(ctx.channel, discord.Thread):
+        return True
+    else:
+        raise NotInThread(f"This command can only be used in a thread")
 
 
 class ThreadTools(commands.Cog):
@@ -21,7 +28,7 @@ class ThreadTools(commands.Cog):
     @discord.slash_command(name="ask",
                            guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild],
                            description="Creates a new thread in the #qa channel")
-    async def create(self, ctx: discord.commands.context.ApplicationContext,
+    async def create(self, ctx: discord.ApplicationContext,
                      question: Option(str, "What is your question?", required=True, default='')):
         """
         Handler for the /ask command to ask a question that will be linked to the Q&A channel
@@ -45,13 +52,10 @@ class ThreadTools(commands.Cog):
             await user_response.edit_original_message(content=f"Please see: {thread.mention}")
         await ctx.delete(delay=30)
 
-    @discord.slash_command(guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild], name="close", description="Closes the current thread")
-    async def close(self, ctx: discord.commands.context.ApplicationContext):
-        if not isinstance(ctx.channel, discord.Thread):
-            await ctx.respond("This command can only be ran inside a thread")
-            await ctx.delete(delay=3)
-            return
-
+    @discord.slash_command(guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild], name="close",
+                           description="Closes the current thread")
+    @commands.check(is_in_thread)
+    async def close(self, ctx: discord.ApplicationContext):
         thread: discord.Thread = ctx.channel
         question_author_id = await hacky_get_thread_starter_user_id(thread)
         if thread.locked:
@@ -71,15 +75,9 @@ class ThreadTools(commands.Cog):
 
     @discord.slash_command(guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild],
                            name="delete_thread", description="Deletes the current thread")
-    async def delete_thread(self, ctx: discord.commands.context.ApplicationContext):
-        if not isinstance(ctx.channel, discord.Thread):
-            await ctx.respond("This command can only be used in a thread")
-            await ctx.delete(delay=3)
-            return
-        if not ctx.author.guild_permissions.manage_threads:
-            await ctx.respond(f"{ctx.author.mention}, you do not have permission to delete threads")
-            await ctx.delete(delay=3)
-            return
+    @commands.check(is_in_thread)
+    @commands.has_permissions(manage_threads=True)
+    async def delete_thread(self, ctx: discord.ApplicationContext):
         thread: discord.Thread = ctx.channel
         if thread.locked:
             await ctx.respond(f"This thread has been deleted by {ctx.author.mention}")
