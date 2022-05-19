@@ -9,4 +9,4 @@ WORKDIR /app
 RUN poetry config virtualenvs.create false
 RUN poetry install
 
-ENTRYPOINT ["python", "bot.py"]
+ENTRYPOINT ["python", "bot.py", ">>", "/proc/1/fd/1"]
