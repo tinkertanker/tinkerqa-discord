@@ -19,10 +19,12 @@ embed_thumbnail_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9
                       "Icon-round-Question_mark.svg/2048px-Icon-round-Question_mark.svg.png"
 
 
-def gen_embed(qn: str, author: Union[discord.User, discord.Member]) -> discord.Embed:
+def gen_embed(qn: str, author: Union[discord.User, discord.Member],
+              helper_role_id=helper_role) -> discord.Embed:
     embed = discord.Embed(title="QA Thread",
-                          description=f"Please respond in the thread directly. "
-                                      f"{author.mention}, please provide additional context if needed.",
+                          description=f"Please respond in the thread directly.\n"
+                                      f"{author.mention}, please provide additional context if needed.\n"
+                                      f"<@{helper_role_id}>, please provide assistance if possible",
                           color=0x2bff00)
     avatar_url = author.default_avatar.url
     if author.avatar:
