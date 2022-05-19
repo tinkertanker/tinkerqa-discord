@@ -21,7 +21,9 @@ embed_thumbnail_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9
 
 def gen_embed(qn: str, author: Union[discord.User, discord.Member]) -> discord.Embed:
     embed = discord.Embed(title="QA Thread",
-                          description="Please respond in the thread directly", color=0x2bff00)
+                          description=f"Please respond in the thread directly. "
+                                      f"{author.mention}, please provide additional context if needed.",
+                          color=0x2bff00)
     avatar_url = author.default_avatar.url
     if author.avatar:
         avatar_url = author.avatar.url
@@ -39,21 +41,26 @@ async def on_ready():
     logger.info(f'Logged in as {bot.user.name}')
 
 
-@bot.slash_command(guild_ids=[guild], name="mkthread",
+@bot.slash_command(guild_ids=[guild], name="ask",
                    description="Creates a new thread in the #qa channel")
 async def create(ctx: discord.commands.context.ApplicationContext,
                  question: Option(str, "What is your question?", required=True, default='')):
-    # TODO: this code needs to be refactored.
     if not question:
         await ctx.respond("Please try again, with an ACTUAL question")
         return
     user_response = await ctx.respond("Please wait, creating the thread now")
     with ctx.typing():
         embed = gen_embed(question, ctx.author)
+        # note: very fragile. needs to be improved
         msg = await bot.get_channel(qa_channel).send(f"{ctx.author.mention}", embed=embed)
         thread = await msg.create_thread(name=question)
         logger.info(f"Created thread {thread.id}")
         await user_response.edit_original_message(content=f"Please see: {thread.jump_url}")
+
+
+async def get_first_message(channel: discord.Thread) -> discord.Message:
+    async for msg in channel.history(limit=1, oldest_first=True):
+        return msg
 
 
 @bot.slash_command(guild_ids=[guild], name="close", description="Closes the current thread")
@@ -65,8 +72,39 @@ async def close(ctx: discord.commands.context.ApplicationContext):
     if thread.locked:
         await ctx.respond("This command cannot be used inside a locked thread")
         return
-    await ctx.respond("Thread closed")
-    await thread.archive(locked=True)
+    # note: this hack is needed because it turns out that mentions don't get retrieved
+    # not sure why
+    first_msg = await get_first_message(thread)
+    if not first_msg.system_content:
+        await ctx.respond("Internal error, please contact devs. Error code: empty-content")
+        return
+    # trial_2 = await thread.fetch_message(first_msg.id)
+    contents = first_msg.system_content
+    contents = contents.replace("<@", "").replace(">", "")
+    try:
+        int(contents)
+    except ValueError:
+        await ctx.respond("Internal error, please contact devs. Error code: no ping")
+        return
+    if int(contents) == int(ctx.author.id) or ctx.author.guild_permissions.manage_threads:
+        if ctx.author.guild_permissions.manage_threads:
+            await ctx.respond("Thread closed by moderator")
+        else:
+            await ctx.respond("Thread closed by OP")
+        await thread.archive(locked=True)
+    else:
+        await ctx.respond("You do not have permission to close this thread")
+
+
+# @bot.slash_command(guild_ids=[guild], name="clear_channel",
+#                    description="Deletes all the messages present in the channel")
+# async def clear_channel(ctx: discord.commands.context.ApplicationContext):
+#     if isinstance(ctx.channel, discord.TextChannel):
+#         chan: discord.TextChannel = ctx.channel
+#         await chan.delete_messages([m async for m in chan.history(limit=200)])
+#         await ctx.respond("Done.")
+#     else:
+#         await ctx.respond("Can't delete")
 
 
 if __name__ == "__main__":
