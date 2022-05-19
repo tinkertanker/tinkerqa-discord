@@ -19,7 +19,7 @@ class ThreadTools(commands.Cog):
         self.helper_role = self.bot.config["role_ids"]["helper_role"]
 
     @discord.slash_command(name="ask",
-                           guild_ids=[976345115826212884],
+                           guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild],
                            description="Creates a new thread in the #qa channel")
     async def create(self, ctx: discord.commands.context.ApplicationContext,
                      question: Option(str, "What is your question?", required=True, default='')):
@@ -43,7 +43,7 @@ class ThreadTools(commands.Cog):
             await user_response.edit_original_message(content=f"Please see: {thread.mention}")
         await ctx.delete(delay=30)
 
-    @discord.slash_command(guild_ids=[976345115826212884], name="close", description="Closes the current thread")
+    @discord.slash_command(guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild], name="close", description="Closes the current thread")
     async def close(self, ctx: discord.commands.context.ApplicationContext):
         if not isinstance(ctx.channel, discord.Thread):
             await ctx.respond("This command can only be ran inside a thread")
@@ -67,7 +67,8 @@ class ThreadTools(commands.Cog):
             return
         await thread.archive(locked=True)
 
-    @discord.slash_command(guild_ids=[976345115826212884], name="delete_thread", description="Deletes the current thread")
+    @discord.slash_command(guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild],
+                           name="delete_thread", description="Deletes the current thread")
     async def delete_thread(self, ctx: discord.commands.context.ApplicationContext):
         if not isinstance(ctx.channel, discord.Thread):
             await ctx.respond("This command can only be used in a thread")
@@ -88,10 +89,6 @@ class ThreadTools(commands.Cog):
             await ctx.respond("A thread cannot be deleted if it is not locked and closed")
             await ctx.delete(delay=3)
             return
-
-    @staticmethod
-    def is_thread(self, ctx):
-        return isinstance(ctx.channel, discord.Thread)
 
 
 def setup(bot: tinkerqa_discord.TinkerQaDiscord):
