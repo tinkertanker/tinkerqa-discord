@@ -100,7 +100,8 @@ async def delete_thread(ctx: discord.commands.context.ApplicationContext):
         return
     thread: discord.Thread = ctx.channel
     if thread.locked:
-        await ctx.author.send(content="I have deleted the locked thread")
+        # await ctx.author.send(content="I have deleted the locked thread")
+        await ctx.respond("This thread has been deleted")
         await thread.delete()
         return
     else:
