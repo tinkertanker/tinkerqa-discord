@@ -14,6 +14,9 @@ logger = logging.getLogger("tkqa-bot")
 logger.setLevel(logging.INFO)
 bot = discord.Bot()
 
+# Configuration
+# todo: move this out to a separate file
+
 guild = 976345115826212884
 qa_channel = 976356366316875807
 helper_role = 976669617097437208
@@ -76,6 +79,7 @@ async def create(ctx: discord.commands.context.ApplicationContext,
         thread = await msg.create_thread(name=question)
         logger.info(f"Created thread {thread.id}")
         await user_response.edit_original_message(content=f"Please see: {thread.jump_url}")
+        await user_response.delete(delay=10)
 
 
 async def get_first_message(channel: discord.Thread) -> discord.Message:
@@ -105,6 +109,7 @@ async def delete_thread(ctx: discord.commands.context.ApplicationContext):
         return
     else:
         await ctx.respond("A thread cannot be deleted if it is not locked and closed")
+        await ctx.delete(delay=3)
         return
 
 
