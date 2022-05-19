@@ -1,0 +1,2 @@
+class HackyException(Exception):
+    pass
