@@ -13,7 +13,11 @@ If not, please install poetry and run `poetry install`
 ## Deployment
 
 Build the image with
-`docker build . -t tinkerqa-discord:latest`
+```shell
+docker build . -t tinkerqa-discord:latest
+```
 
 Deploy it with
-`docker run -d -e DISCORD_TOKEN=<TOKEN> tinkerqa-discord:latest`
+```shell
+docker run -d -e DISCORD_TOKEN=<TOKEN> tinkerqa-discord:latest
+```
