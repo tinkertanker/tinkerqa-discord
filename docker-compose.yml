@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+    tinkerqa_bot:
+        container_name: tinkerqa_bot
+        build:
+            context: .
+        image: tinkerqa-discord:latest
+        restart: on-failure
