@@ -1,27 +1,19 @@
+# noinspection PyPackageRequirements
 import discord
 import logging
-import os
 
+# noinspection PyPackageRequirements
 from discord.ext import commands
 
 from tinkerqa_discord.commands.errors import NotInThread
-
-try:
-    from yaml import load, CLoader as Loader
-except ImportError:
-    from yaml import load, Loader
+from tinkerqa_discord import Config
 
 
 class TinkerQaDiscord(discord.Bot):
 
-    _this_file_dir = os.path.dirname(os.path.abspath(__file__))
-    _config_path = os.path.abspath(os.path.join(_this_file_dir, "..", "config.yml"))
-    conf = load(open(_config_path, 'r'), Loader)
-    guild = conf["guild"]
-
-    def __init__(self, *args, **options):
+    def __init__(self, cfg: Config, *args, **options):
         super().__init__(*args, **options)
-        self.config = self.conf
+        self.cfg = cfg
         self._setup_logger()
         self.load_extension("tinkerqa_discord.commands.threadtools")
 

@@ -1,15 +1,14 @@
+# noinspection PyPackageRequirements
 import discord
+# noinspection PyPackageRequirements
 from discord import Option
+# noinspection PyPackageRequirements
 from discord.ext import commands
 
 import tinkerqa_discord
 from tinkerqa_discord.commands.errors import NotInThread
 from tinkerqa_discord.helpers import gen_embed, hacky_get_thread_starter_user_id
 
-
-# guild = configuration["role_ids"]["guild"]
-# qa_channel = configuration["role_ids"]["qa_channel"]
-# helper_role = configuration["role_ids"]["helper_role"]
 
 async def is_in_thread(ctx: discord.ApplicationContext):
     if isinstance(ctx.channel, discord.Thread):
@@ -21,12 +20,10 @@ async def is_in_thread(ctx: discord.ApplicationContext):
 class ThreadTools(commands.Cog):
     def __init__(self, bot: tinkerqa_discord.TinkerQaDiscord):
         self.bot = bot
-        # self.guild = self.bot.config["role_ids"]["guild"]
-        self.qa_channel = self.bot.config["role_ids"]["qa_channel"]
-        self.helper_role = self.bot.config["role_ids"]["helper_role"]
+        self.qa_channel = self.bot.cfg.qa_channel
+        self.helper_role = self.bot.cfg.helper_role
 
     @discord.slash_command(name="ask",
-                           guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild],
                            description="Creates a new thread in the #qa channel")
     async def create(self, ctx: discord.ApplicationContext,
                      question: Option(str, "What is your question?", required=True, default='')):
@@ -52,7 +49,7 @@ class ThreadTools(commands.Cog):
             await user_response.edit_original_message(content=f"Please see: {thread.mention}")
         await ctx.delete(delay=30)
 
-    @discord.slash_command(guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild], name="close",
+    @discord.slash_command(name="close",
                            description="Closes the current thread")
     @commands.check(is_in_thread)
     async def close(self, ctx: discord.ApplicationContext):
@@ -73,8 +70,7 @@ class ThreadTools(commands.Cog):
             return
         await thread.archive(locked=True)
 
-    @discord.slash_command(guild_ids=[tinkerqa_discord.TinkerQaDiscord.guild],
-                           name="delete_thread", description="Deletes the current thread")
+    @discord.slash_command(name="delete_thread", description="Deletes the current thread")
     @commands.check(is_in_thread)
     @commands.has_permissions(manage_threads=True)
     async def delete_thread(self, ctx: discord.ApplicationContext):
