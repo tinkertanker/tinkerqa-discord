@@ -12,9 +12,9 @@ logger = logging.getLogger("tkqa-bot")
 logger.setLevel(logging.INFO)
 bot = discord.Bot()
 
-guild = 976345115826212884
-qa_channel = 976356366316875807
-helper_role = 976669617097437208
+guild = int(os.environ.get("DISCORD_GUILD"))
+qa_channel = int(os.environ.get("GUILD_QA_CHANNEL"))
+helper_role = int(os.environ.get("GUILD_HELPER_ROLE"))
 embed_thumbnail_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/" \
                       "Icon-round-Question_mark.svg/2048px-Icon-round-Question_mark.svg.png"
 
