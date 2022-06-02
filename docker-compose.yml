@@ -4,5 +4,7 @@ services:
         container_name: tinkerqa_bot
         build:
             context: .
+        volumes:
+            - ./:/app
         image: tinkerqa-discord:latest
         restart: on-failure
