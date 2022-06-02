@@ -2,7 +2,8 @@ import os
 
 from dotenv import load_dotenv
 
-from tinkerqa_discord import TinkerQaDiscord, Config
+from tinkerqa_discord import TinkerQaDiscord
+from tinkerqa_discord.config import Config
 
 if __name__ == "__main__":
     load_dotenv()

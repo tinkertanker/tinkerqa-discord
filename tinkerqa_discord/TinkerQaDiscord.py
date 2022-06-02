@@ -6,7 +6,7 @@ import logging
 from discord.ext import commands
 
 from tinkerqa_discord.commands.errors import NotInThread
-from tinkerqa_discord import Config
+from tinkerqa_discord.config import Config
 
 
 class TinkerQaDiscord(discord.Bot):
