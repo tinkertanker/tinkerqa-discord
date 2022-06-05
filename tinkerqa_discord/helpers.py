@@ -25,10 +25,11 @@ def gen_embed(qn: str, author: Union[discord.User, discord.Member],
     :return: The embed template
     """
     embed = discord.Embed(title="QA Thread",
-                          description=f"Please respond in the thread directly.\n"
+                          description=f"{author.mention} asked: *{qn}*"
+                                      f"Please respond in the thread directly.\n"
                                       f"{author.mention}, please provide additional context if needed.\n"
-                                      f"\n"
-                                      f"{helper_role_ping.mention}, please provide assistance if possible",
+                                      f"\n",
+                                      # f"{helper_role_ping.mention}, please provide assistance if possible",
                           color=0x2bff00)
     embed_thumbnail_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/" \
                           "Icon-round-Question_mark.svg/2048px-Icon-round-Question_mark.svg.png"
