@@ -25,7 +25,8 @@ def gen_embed(qn: str, author: Union[discord.User, discord.Member],
     :return: The embed template
     """
     embed = discord.Embed(title="QA Thread",
-                          description=f"{author.mention} asked: *{qn}*"
+                          description=f"{author.mention} asked: **{qn}**\n"
+                                      f"\n"
                                       f"Please respond in the thread directly.\n"
                                       f"{author.mention}, please provide additional context if needed.\n"
                                       f"\n",
