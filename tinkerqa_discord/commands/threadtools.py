@@ -45,6 +45,7 @@ class ThreadTools(commands.Cog):
             # Note: The message is ULTRA fragile, please do not change it
             msg = await self.bot.get_channel(self.qa_channel).send(f"{ctx.author.mention}", embed=embed)
             thread = await msg.create_thread(name=question)
+            await thread.send(content="Please reply below this message.")
             self.bot.logger.info(f"Created thread {thread.id}")
             await user_response.edit_original_message(content=f"Please see: {thread.mention}")
         await ctx.delete(delay=30)
