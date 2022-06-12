@@ -44,7 +44,7 @@ class ThreadTools(commands.Cog):
             embed = gen_embed(question, ctx.author, ctx.guild.get_role(self.helper_role))
             # Note: The message is ULTRA fragile, please do not change it
             msg = await self.bot.get_channel(self.qa_channel).send(f"{ctx.author.mention}", embed=embed)
-            thread = await msg.create_thread(name=question)
+            thread = await msg.create_thread(name=f"{ctx.author} has asked")
             await thread.send(content="Please reply below this message.")
             self.bot.logger.info(f"Created thread {thread.id}")
             await user_response.edit_original_message(content=f"Please see: {thread.mention}")
